@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from shutil import which
 import os
+from environ import Env
+
+env = Env()
+Env.read_env()
+
+ENVIRONMENT=env('ENVIRONMENT', default='production')
+ENVIRONMENT='production'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +29,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-abgws9uf+9=#!ftx&oo_1ki(+39lytq$$k&i$m6+k@hz*lw3dq'
+# SECRET_KEY = 'django-insecure-abgws9uf+9=#!ftx&oo_1ki(+39lytq$$k&i$m6+k@hz*lw3dq'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+if ENVIRONMENT == 'development':
+    DEBUG = True
+else:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 
 # Application definition
@@ -61,6 +74,8 @@ NPM_BIN_PATH = which("npm")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
